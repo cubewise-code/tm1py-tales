@@ -4,18 +4,10 @@ email: MWirtz@cubewise.com
 description: > # this means to ignore newlines until "baseurl:"
   A community project to share interesting TM1py stories and ideas.
 baseurl: "/tm1py-tales" # the subpath of your site, e.g. /blog/
-url: "https://mariuswirtz.github.io/" # the base hostname & protocol for your site
+url: "https://cubewise-code.github.io/" # the base hostname & protocol for your site
 twitter_username: cubewise
 github_username:  mariuswirtz
 
 # Build settings
 markdown: kramdown
-kramdown:
-  input: GFM
-  auto_ids: true # Auto-generate ID's for headings
-plugins:
-  - jekyll-remote-theme # https://github.com/benbalter/jekyll-remote-theme
-  - jekyll-default-layout # https://github.com/benbalter/jekyll-default-layout
-  - jekyll-default-layout # https://github.com/benbalter/jekyll-titles-from-headings
-  - jekyll-relative-links # https://github.com/benbalter/jekyll-relative-links
-  - jekyll-avatar # https://github.com/benbalter/jekyll-avatar
+permalink: /:year/:title:output_ext

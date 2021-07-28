@@ -3,7 +3,7 @@ A collection of TM1py stories, use cases and best practices
 
 brought to you by the TM1py community
 
-https://mariuswirtz.github.io/tm1py-tales/
+https://cubewise-code.github.io/tm1py-tales/
 
 
 
