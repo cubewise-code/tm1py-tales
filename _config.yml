@@ -2,12 +2,12 @@
 title: TM1py Tales
 email: MWirtz@cubewise.com
 description: > # this means to ignore newlines until "baseurl:"
-  A community project to share interesting TM1py user stories and blueprints.
+  A community project to share interesting TM1py stories and ideas.
 baseurl: "/tm1py-tales" # the subpath of your site, e.g. /blog/
 url: "https://mariuswirtz.github.io/" # the base hostname & protocol for your site
-twitter_username: jekyllrb
-github_username:  jekyll
+twitter_username: cubewise
+github_username:  mariuswirtz
 
 # Build settings
-markdown: kramdown
+markdown: CommonMark
 permalink: /:year/:title:output_ext
