@@ -29,8 +29,3 @@ with TM1Service(address='localhost', port=12354, ssl=True, user='admin', passwor
     print(tm1.server.get_product_version())
 
 ```
-
-<img src="https://images.squarespace-cdn.com/content/v1/5268c662e4b0269256614e9a/1627476400785-SUAXHCO8WVZ3ZQ1RWQF0/tm1py-Picture2.png?format=300w" style="width: 100%; height: 100%;text-align: center"/>
-
-
-
