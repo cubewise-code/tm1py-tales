@@ -8,6 +8,7 @@ categories: introduction
 The Problem
 =====
 
+
 In large organizations that employ IBM Planning Analytics (TM1) for years, you often find multiple dedicated smaller TM1 instances *(= models)* instead of one monolithic TM1 model used by everyone in the organization.
 
 Having multiple TM1 instances is not a problem in itself. In fact it helps in many ways:
@@ -94,6 +95,7 @@ The script skips rule derived values, as it assumes that the rules in the `}Elem
 Further Thoughts
 =====
 
+_____
 
 ### `(1 to n)` vs `(n to n)`
 There are two ways to implement synchronizations in a multi instance environment. 
@@ -102,13 +104,15 @@ There are two ways to implement synchronizations in a multi instance environment
 
 TM1py can support both ways but in the (n to n) setup you will need to write smarter code to monitor all instances and to cater for potential conflicts.
 
-### Opimizations 
+### Optimizations 
+
 When dealing with very large dimensions _(> 100k elements)_, you may want to optimize the script.
 There are two easy tricks to boost the performance of your script
 - Multi thread attribute updates. You will notice that typically a large part of the time is consumed to write attribute values to TM1.
 Imagine a 500k element dimension with 20 attributes produces 10M string cell updates. Check out the [write_async](https://cubewise-code.github.io/tm1py-tales/2021/write-with-tm1py.html) function.
 - Avoid full dimension retrieval and comparision. For very large dimension it is highly expensive to retrieve the full dimension from both instances and compare them in python.
 Instead you can use the `get_hierarchy_summary` function to retrieve a summary _(e.g. `{'Elements': 5, 'Edges': 4, 'ElementAttributes': 4, 'Members': 5, 'Levels': 2}`)_ for each hierarchy instead and compare the summaries.
+
 ```python
 from TM1py import TM1Service
 
