@@ -29,3 +29,6 @@ with TM1Service(address='localhost', port=12354, ssl=True, user='admin', passwor
     print(tm1.server.get_product_version())
 
 ```
+_____
+
+Written by [![GitHub](https://i.stack.imgur.com/tskMh.png) Marius Wirtz](https://github.com/mariuswirtz)
