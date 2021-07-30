@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Introducing TM1py Tales"
+title:  "Synchronizing hierarchies in multi instance TM1 environments"
 date:   2021-07-30 10:30:00
 categories: introduction
 ---
@@ -8,7 +8,7 @@ categories: introduction
 The Problem
 =====
 
-In large organizations that employ TM1 for years you often find multiple dedicated smaller TM1 instances *(= models)* instead of one monolithic TM1 model used by everyone in the organization.
+In large organizations that employ IBM Planning Analytics (TM1) for years, you often find multiple dedicated smaller TM1 instances *(= models)* instead of one monolithic TM1 model used by everyone in the organization.
 
 Having multiple TM1 instances is not a problem in itself. In fact it helps in many ways:
  - scaling models horizontally over multiple machines ensures more resources (CPU, RAM) per instance and better performance for end-users
@@ -19,6 +19,9 @@ Having multiple TM1 instances is not a problem in itself. In fact it helps in ma
 However, laying out your TM1 environment "horizontally" comes with unique challenges.
 - You need to guarantee that certain shared hierarchies are in sync. For instance, there must only be one CoA rollup in the organization.
 - Especially shared dimensions that are edited by power users within TM1 can be challenging 
+ 
+ <img src="https://images.squarespace-cdn.com/content/v1/5268c662e4b0269256614e9a/1627476400785-SUAXHCO8WVZ3ZQ1RWQF0/tm1py-Picture2.png?format=500w" style="width: 70%; height: 70%;text-align: center"/>
+
  
 The Solution
 =====
@@ -53,18 +56,19 @@ However it does __not__ consider the element attribute values and subsets.
 Those need to be transferred separately:
 
 ```python
+from mdxpy import MdxBuilder, MdxHierarchySet
 from TM1py import TM1Service, Process
 
 with TM1Service(address="", port=12354, ssl=True, user="admin", password="apple") as tm1_source:
     with TM1Service(address="", port=12297, ssl=True, user="admin", password="apple") as tm1_target:
         dimension_name = "d1"
+        attribute_cube = "}ElementAttributes_" + dimension_name
 
-        mdx = f"""
-        SELECT
-        NON EMPTY {{Tm1SubsetAll([{dimension_name}])}} ON ROWS,
-        NON EMPTY {{Tm1SubsetAll([}}ElementAttributes_{dimension_name}])}} ON COLUMNS
-        FROM [}}ElementAttributes_{dimension_name}]
-        """
+        query = MdxBuilder.from_cube(attribute_cube)
+        query = query.non_empty(axis=0)
+        query = query.add_hierarchy_set_to_column_axis(MdxHierarchySet.tm1_subset_all(dimension_name))
+        query = query.add_hierarchy_set_to_column_axis(MdxHierarchySet.tm1_subset_all(attribute_cube))
+        mdx = query.to_mdx()
 
         attribute_cells = tm1_source.cells.execute_mdx(
             mdx=mdx,
@@ -72,13 +76,13 @@ with TM1Service(address="", port=12354, ssl=True, user="admin", password="apple"
             skip_cell_properties=True,
             skip_rule_derived_cells=True)
 
-        clear_process = Process(f"CubeClearData('}}ElementAttributes_{dimension_name}');")
-        success, status, _ = tm1_target.processes.execute_process_with_return(clear_process)
+        clear_process = Process(f"CubeClearData('{attribute_cube}');")
+        success, _, _ = tm1_target.processes.execute_process_with_return(clear_process)
         if not success:
             raise RuntimeError(f"Failed to clear attribute cube for dimension: '{dimension_name}'")
 
         tm1_target.cells.write(
-            cube_name=f"}}ElementAttributes_{dimension_name}",
+            cube_name=attribute_cube,
             cellset_as_dict=attribute_cells,
             use_ti=True,
             deactivate_transaction_log=True,
