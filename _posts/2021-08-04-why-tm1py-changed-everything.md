@@ -14,7 +14,7 @@ The Old Ways
 Remember the quick and dirty way to get data out of your TM1 system? Just click right on a cube and choose 'Export as Text Data'. There you can either select a view or create a new one on the fly. You end up with a rather decent text file that you can use in other tools (like Tableau or PowerBI) or for further analysis via R or Python.  
 Unfortunately that is a manual process and you have to handle the flat file with all its possible problems. (Did someone say `encoding`?) And of course the security concept must allow for the possibility and you must have access to either Perspectives or Architect. 
 
-![Screenshot - Export via Architect](/_images/2021-08-04-why-tm1py-changed-everything_01.png)  
+![Screenshot - Export via Architect](https://github.com/cubewise-code/tm1py-tales/blob/master/_images/2021-08-04-why-tm1py-changed-everything_01.png?raw=true)  
 *Manual Export via Architect*
 
 If you are lucky, you have not only access to one of those tools but are also an admin user. Then you can create your own TurboIntegrator process which exports a subsection of the cube via `ASCIIOutput` into a text file. Hopefully it does not mix up the decimal separator and the column delimiter is not used in an element name. But otherwise you will be fine and the best part is: You can schedule it. But you still end up with a text file.  
