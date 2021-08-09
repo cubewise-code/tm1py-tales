@@ -1,3 +1,11 @@
+---
+layout: post
+title:  "TM1py Connection Checker"
+date:   2021-08-05 9:00:00
+categories: personal-story
+---
+
+
 # TM1 Connection Checking Tool
 
 I decided to code this small tool to provide a simple way to test various connection parameters and assist with
@@ -13,7 +21,7 @@ distribute it as an executable file.
 The tool is using a simple JSON configuration file that is storing a dictionary (catalogue) of various connection
 configurations. Each configuration has a unique name and is then assigned a dictionary of TM1py connection parameters.
 
-When run, it is expected the user supplies a filename of a JSON file and a name of connection configuration that should be tested.
+When run, it is expected the user supplies a filename of a JSON file, and a name of connection configuration that should be tested.
 The default configuration file name is `test_conn.json`, however alternatively the user might supply a different JSON configuration
 file to the CLI. The tool will check existence of the JSON config file, then it will locate connection configuration
 using a configuration name supplied to the CLI. It will then use the connection parameters retrieved from the JSON
