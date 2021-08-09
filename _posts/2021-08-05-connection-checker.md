@@ -1,6 +1,8 @@
 ---
-layout: post title:  "TM1py Connection Checker"
-date:   2021-08-05 9:00:00 categories: personal-story
+layout: post 
+title: "TM1py Connection Checker"
+date: 2021-08-05 9:00:00 
+categories: personal-story
 ---
 
 # TM1 Connection Checking Tool
