@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Synchronizing hierarchies in multi instance TM1 environments"
+title:  "Synchronizing hierarchies with TM1py"
 date:   2021-07-30 10:30:00
 categories: introduction
 ---
