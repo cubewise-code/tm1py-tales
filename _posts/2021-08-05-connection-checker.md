@@ -4,7 +4,7 @@ I decided to code this small tool to provide a simple way to test various connec
 troubleshooting in case of errors when connecting from TM1py to TM1.
 
 Motivation is to avoid writing the same code (yet easy) when experiencing connection issues and have a simple
-diagnostics of exceptional states already at hand.
+diagnostics of exceptional states  (e.g., wrong credentials, wrong port, TM1 not up and running, etc.) already at hand.
 
 ## About the Tool
 The tool was coded as a command line utility with a simple command line interface (CLI), for simplicity I decided to 
@@ -489,3 +489,5 @@ if __name__ == '__main__':
   }
 }
 ```
+
+Written by [![Linkedin](https://i.stack.imgur.com/gVE0j.png) Petr Buncik](https://www.linkedin.com/in/petr-buncik-61b0822/)
