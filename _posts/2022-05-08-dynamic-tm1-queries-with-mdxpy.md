@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Dynamic TM1 queries with MDXpy"
-date:   2022-05-08 22:20:00
+date:   2022-05-08 20:20:00
 categories: mdx
 ---
 
@@ -35,8 +35,8 @@ sufficient flexibility.
 However, the approach has obvious drawbacks:
 
 - it requires advanced MDX knowledge
-- it is error-prone and difficult to create MDX through plain string concatenations _(just imagine getting all the `}`
-  , `]` and `)` right)_
+- it is error-prone and difficult to create MDX through plain string concatenations _(just imagine getting all the `{}`
+  , `[]` and `()` right)_
 
 ### MDXpy solves this
 
