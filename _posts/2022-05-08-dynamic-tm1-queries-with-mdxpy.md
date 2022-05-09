@@ -7,15 +7,15 @@ categories: mdx
 
 # Dynamic TM1 queries with MDXpy
 
-In most, if not all, TM1py scripts it is necessary to query cell level data from TM1. Usually, TM1py scripts are also
+In most TM1py scripts it is necessary to query cube data from TM1. Usually, TM1py scripts are also
 parametrized. For instance, a timeseries forecasting script must work for any given `region` and `product` element. 
 
-The TM1py scripts we write must be capable of querying TM1 data dynamically based on passed parameters.
+So TM1py scripts must be capable of querying TM1 data dynamically based on passed parameters.
 
 We think the best way to accomplish this is to use MDX with MDXpy. Before we look into the merits and advantages of the
 suggested approach, let's look at the alternatives to MDXpy.
 
-### 1. Use existing cube views
+### Alternative 1. Use existing cube views
 
 TM1py provides easy to use functions to read data based on existing cube views such as `execute_view_dataframe`.
 This approach keeps python code easy and requires zero knowledge about MDX
@@ -25,7 +25,7 @@ However, there are two problems about this approach:
 - it is not dynamic
 - it creates an unnecessary dependence on a cube view in TM1
 
-###  2. Use plain MDX
+###  Alternative 2. Use plain MDX
 
 TM1py also provides easy to use functions to read data based on MDX such as `execute_mdx_dataframe`.
 
@@ -48,7 +48,11 @@ Consider the following task:
 - based on the passed parameters the script retrieves data from the Sales cube
 - If a consolidated element is passed, the script must retrieve data from the leaves underneath (e.g. retrieve `Denmark`
   , `Sweden`, `Norway`, `Finland` for `Scandinavia`)
-- for all other dimensions in the cube all leaf elements are retrieved
+- for all other dimensions in the cube all leaf elements are retrieved 
+
+![The Sales Cube](https://github.com/cubewise-code/tm1py-tales/blob/master/_images/2022-05-08-sales-cube.png?raw=true)  
+
+
 
 Here is the solution with MDXpy:
 
@@ -60,17 +64,23 @@ from mdxpy import MdxBuilder, MdxHierarchySet, Member
 
 year, region, product = sys.argv[1:]
 
-with TM1Service(base_url='https://localhost:12354', user='admin', password='apple') as tm1:
-    query = MdxBuilder.from_cube('Sales')
+with TM1Service(base_url="https://localhost:12354", user="admin", password="apple") as tm1:
+    query = MdxBuilder.from_cube("Sales")
     query.rows_non_empty()
 
-    query.add_hierarchy_set_to_column_axis(MdxHierarchySet.children(Member.of('Time', year)))
+    months_selection = MdxHierarchySet.children(Member.of("Time", year))
+    query.add_hierarchy_set_to_column_axis(months_selection)
 
-    query.add_hierarchy_set_to_row_axis(MdxHierarchySet.descendants(Member.of('Region', region)).filter_by_level(0))
-    query.add_hierarchy_set_to_row_axis(MdxHierarchySet.descendants(Member.of('Product', product)).filter_by_level(0))
+    region_selection = MdxHierarchySet.descendants(Member.of("Region", region))
+    region_selection = region_selection.filter_by_level(0)
+    query.add_hierarchy_set_to_row_axis(region_selection)
 
-    for dimension_name in tm1.cubes.get_dimension_names('Sales'):
-        if dimension_name in ['Product', 'Region', 'Time']:
+    product_selection = MdxHierarchySet.descendants(Member.of("Product", product))
+    product_selection = product_selection.filter_by_level(0)
+    query.add_hierarchy_set_to_row_axis(product_selection)
+
+    for dimension_name in tm1.cubes.get_dimension_names("Sales"):
+        if dimension_name in ["Product", "Region", "Time"]:
             continue
 
         query.add_hierarchy_set_to_row_axis(MdxHierarchySet.all_leaves(
@@ -78,6 +88,7 @@ with TM1Service(base_url='https://localhost:12354', user='admin', password='appl
             hierarchy=dimension_name))
 
     df = tm1.cells.execute_mdx_dataframe(mdx=query.to_mdx())
+
 ```
 
 _____
