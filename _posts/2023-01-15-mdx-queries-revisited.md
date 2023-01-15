@@ -1,7 +1,7 @@
 ---
 layout: post
-layout: post title: "mdx-queries-revisited"
-date:   2023-01-15 18:30:00 categories: introduction
+title: "MDX Queries Revisited"
+date:   2023-01-15 18:30:00
 categories: introduction
 ---
 
