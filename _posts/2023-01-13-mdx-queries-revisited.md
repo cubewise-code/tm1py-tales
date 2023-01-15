@@ -1,6 +1,8 @@
 ---
-layout: post title:  "mdx-queries-with-tm1py-revisited"
+layout: post
+layout: post title: "mdx-queries-revisited"
 date:   2023-01-15 18:30:00 categories: introduction
+categories: introduction
 ---
 
 
