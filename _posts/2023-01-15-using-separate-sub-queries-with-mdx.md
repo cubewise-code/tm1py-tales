@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "MDX Queries Revisited"
+title: "Using Separate Sub Queries with MDX"
 date:   2023-01-15 18:30:00
 categories: introduction
 ---
@@ -9,7 +9,8 @@ categories: introduction
 # Table of Contents
 
 <!-- TOC start -->
-- [The simple "Data Bridge" between TM1 and Python](#the-simple-data-bridge-between-tm1-and-python)
+- [Simple MDX queries with TM1py](#simple-mdx-queries-with-tm1py)
+- [Why use separate sub queries?](#why-use-separate-sub-queries)
   * [1. Avoid excessive RAM consumption in Python](#1-avoid-excessive-ram-consumption-in-python)
   * [2. Use partitions for parallel processing](#2-use-partitions-for-parallel-processing)
   * [3. Avoid TM1's `SystemOutOfMemory` error](#3-avoid-tm1s-systemoutofmemory-error)
@@ -19,8 +20,8 @@ categories: introduction
   * [Option 3: partition with `top` & `skip`](#option-3-partition-with-top-skip)
 <!-- TOC end -->
 
-<!-- TOC --><a name="the-simple-data-bridge-between-tm1-and-python"></a>
-# The simple "Data Bridge" between TM1 and Python
+<!-- TOC --><a name="simple-mdx-queries-with-tm1py"></a>
+# Simple MDX queries with TM1py
 
 Python excels at processing data and TM1py makes reading data from TM1 to Python, using MDX, as easy as pie.
 
@@ -64,7 +65,10 @@ df.head(3)
 |  1 |              31 |      10020 | Joe Joe   | Metals       |        50 | WI      | 202002 |  356100 |
 |  2 |              31 |      10020 | Joe Doe   | Metals       |        50 | WI      | 202003 |  356100 |
 
-# Why bother ?
+-------
+
+<!-- TOC --><a name="why-use-separate-sub-queries"></a>
+# Why use separate sub-queries ?
 
 The uncomplicated sample above works fine in most cases. However, when dealing with large or very large data volumes, it
 can make sense to divide your MDX query into separate sub queries.
@@ -81,13 +85,13 @@ Let's look at these reasons in more depth before considering the solution.
 
 
 <!-- TOC --><a name="1-avoid-excessive-ram-consumption-in-python"></a>
-## 1. Avoid excessive RAM consumption in Python
+### 1. Avoid excessive RAM consumption in Python
 
 Python uses quite a lot of memory compared to the memory-efficient TM1 engine. Depending on your data you can assume
 that python requires 0.5 GB to retrieve a million cells out of TM1. That is purely for storage and retrieval. It is easy
 to imagine how a large query (e.g. zero suppression was forgotten) can cause a lack of memory on the machine.
 
-Needless to say, this scenario is discomforting when Py runs on the same machine as the TM1 server.
+Needless to say, this scenario is discomforting when Python runs on the same machine as the TM1 server.
 
 So in order to avoid this disruption it can make sense to query no more than n cells at a time. If the source query has
 more than n cells it must be processed in partitions!
@@ -121,7 +125,7 @@ with TM1Service(base_url="https://localhost:12297", user="admin", password="") a
 ```
 
 <!-- TOC --><a name="2-use-partitions-for-parallel-processing"></a>
-## 2. Use partitions for parallel processing
+### 2. Use partitions for parallel processing
 
 Depending on the problem at hand and the available resource it can make sense to make use of parallel processing.
 
@@ -134,8 +138,11 @@ Here are some examples of problems that can be broken down and processed in para
 - Transfer twelve months of data from a cube in TM1 on-premise to TM1 on-cloud
 - Calculate IRR or NPV on a large set of projects
 
+If you are interested in the details of parallel processing with python for TM1, make sure to watch this blog.
+We will publish a tale shortly!
+
 <!-- TOC --><a name="3-avoid-tm1s-systemoutofmemory-error"></a>
-## 3. Avoid TM1's `SystemOutOfMemory` error
+### 3. Avoid TM1's `SystemOutOfMemory` error
 
 In the cube viewer, a casual TM1 user may easily request a very large dataset unintentionally. This easily happens if a
 user forgets to suppress empty cells in their selection!
@@ -154,13 +161,15 @@ underlying calculation tree may require a lot of RAM to evaluate.
 
 Using separated sub queries we can make sure that each TM1 query is not using more memory than is allowed in TM1.
 
+-------
+
 <!-- TOC --><a name="how-to-implement-sub-queries"></a>
-# How to implement sub-queries?
+# How to implement separate sub-queries?
 
 There are at least three convenient ways to divide your queries into sub-queries.
 
 <!-- TOC --><a name="option-1-partition-by-one-dimension"></a>
-## Option 1: partition by one dimension
+### Option 1: partition by one dimension
 
 This option is generally a good choice if you can assume that data is roughly evenly allocated along the elements of a
 dimension. It tends to be much faster than Option 3.
@@ -193,7 +202,7 @@ FROM [Sales]
 WHERE ([Version].[Actual], [SalesMeasure].[Revenue])
 """
 
-with TM1Service(base_url="https://localhost:12297", user="admin", password="apple") as tm1:
+with TM1Service(base_url="https://localhost:12297", user="admin", password="") as tm1:
     for month in months:
         mdx = base_mdx.format("{[time].[" + month + "]}")
 
@@ -206,7 +215,7 @@ for troubleshooting. If your script fails for one subquery it is much easier to 
 instance, it was the "March" data than knowing it failed for an arbitrary selection of cells.
 
 <!-- TOC --><a name="option-2-partition-with-mdx"></a>
-## Option 2: Partition with MDX
+### Option 2: Partition with MDX
 
 We can use the MDX [SUBSET](https://learn.microsoft.com/en-us/sql/mdx/subset-mdx?view=sql-server-ver16) function to
 slice an MDX set.
@@ -251,7 +260,7 @@ with TM1Service(base_url="https://localhost:12297", user="admin", password="appl
 ```
 
 <!-- TOC --><a name="option-3-partition-with-top-skip"></a>
-## Option 3: Partition with `top` & `skip`
+### Option 3: Partition with `top` & `skip`
 
 TM1py offers `top` and `skip` arguments that can be used when reading data from a TM1 cellset.
 
@@ -297,3 +306,7 @@ This approach is slower compared to option 1 and option 2. It can also not be us
 cellset object in TM1 does not allow parallel access. Option 1 and Option 2 can be used for parallel processing without
 constraints!
 
+-------
+
+_Please note that we used plain MDX strings in the samples above to keep the code simple.
+for a production environment you might want to consider [mdxpy](https://github.com/cubewise-code/mdxpy) in favor of creating MDX with plain strings._
