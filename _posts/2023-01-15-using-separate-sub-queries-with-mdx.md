@@ -25,10 +25,10 @@ categories: introduction
 
 Python excels at processing data and TM1py makes reading data from TM1 to Python, using MDX, as easy as pie.
 
-The straightforward "data bridge" between python and TM1 gives TM1 developers a range of new opportunities for data in
-TM1.
+The straightforward data exchange between Python and TM1 provides TM1 developers with a range of new opportunities for data in
+TM1, such as:
 
-- Direct data exchanges between TM1 and cloud systems
+- Direct data exchanges between TM1 and cloud systems through Python
 - Integration of predictive models in your planning cycle
 - Usage of the expressive Python language for business logic and automation
 
