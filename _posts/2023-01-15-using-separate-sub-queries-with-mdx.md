@@ -223,9 +223,9 @@ slice an MDX set.
 For instance we could divide the source set: `[Month].[01]:[Month].[12]` in 6 chunks of 2 elements each:
 
 - `SUBSET([Month].[01]:[Month].[12], 0, 2)`
-- `SUBSET([Month].[01]:[Month].[12], 2, 4)`
+- `SUBSET([Month].[01]:[Month].[12], 2, 2)`
 - `...`
-- `SUBSET([Month].[01]:[Month].[12], 10, 12)`
+- `SUBSET([Month].[01]:[Month].[12], 10, 2)`
 
 Or we could divide the source set into 12 chunks of 1 element each _(as in the example below)_
 
